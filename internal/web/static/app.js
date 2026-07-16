@@ -560,6 +560,14 @@ function renderJobFiles(detail) {
   card.hidden = false;
 }
 
+$('#job-download-all-btn').addEventListener('click', () => {
+  // Browsers throttle/prompt for multiple auto-triggered downloads, so fire
+  // them staggered rather than all at once; each link already carries its
+  // own href + download attribute from renderJobFiles.
+  const links = [...$('#job-files-list').querySelectorAll('a[download]')];
+  links.forEach((a, i) => setTimeout(() => a.click(), i * 300));
+});
+
 $('#job-delete-btn').addEventListener('click', async () => {
   if (!jobState) return;
   if (!confirm('Delete this job and its files?')) return;

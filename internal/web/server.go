@@ -4,11 +4,22 @@ import (
 	"embed"
 	"io/fs"
 	"net/http"
+	"path/filepath"
 
 	"yt-web-downloader/internal/auth"
 	"yt-web-downloader/internal/config"
 	"yt-web-downloader/internal/jobs"
 )
+
+// brandingFiles are fixed, git-ignored paths under DataDir/branding that an
+// operator can drop images into by hand (no rebuild/redeploy needed). Serving
+// them straight off disk (rather than embedding) lets any of them be absent;
+// http.ServeFile 404s and the frontend falls back to default styling/icons.
+var brandingFiles = map[string]string{
+	"/branding/background.svg":       "background.svg",
+	"/branding/favicon.svg":          "favicon.svg",
+	"/branding/apple-touch-icon.png": "apple-touch-icon.png",
+}
 
 //go:embed static
 var staticFS embed.FS
@@ -38,7 +49,16 @@ func New(cfg *config.Config, mgr *jobs.Manager) http.Handler {
 	root.HandleFunc("POST /api/login", s.handleLogin)
 	root.HandleFunc("POST /api/logout", s.handleLogout)
 	root.Handle("/api/", auth.Middleware(secret, api))
+	for route, file := range brandingFiles {
+		root.HandleFunc("GET "+route, s.handleBranding(file))
+	}
 	static, _ := fs.Sub(staticFS, "static")
 	root.Handle("/", http.FileServer(http.FS(static)))
 	return root
+}
+
+func (s *Server) handleBranding(file string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, filepath.Join(s.cfg.DataDir, "branding", file))
+	}
 }
