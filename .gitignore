@@ -1,0 +1,6 @@
+.env
+/data/
+/yt-web-downloader
+/yt-web-downloader.exe
+cookies*.txt
+/cookies/

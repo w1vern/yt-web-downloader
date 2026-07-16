@@ -1,0 +1,15 @@
+services:
+  yt-web-downloader:
+    build: .
+    container_name: yt-web-downloader
+    ports:
+      # PORT comes from .env (compose reads it for substitution, the app reads
+      # it via env_file) — one variable controls both sides of the mapping.
+      - "${PORT:-8080}:${PORT:-8080}"
+    env_file: .env
+    volumes:
+      - ./data:/data
+      - ./cookies:/cookies
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped

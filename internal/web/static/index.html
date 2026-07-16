@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>yt-web-downloader</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="container">
+
+  <section id="view-login">
+    <div class="card login-card">
+      <h1>yt-web-downloader</h1>
+      <form id="login-form">
+        <label>Login
+          <input id="login-login" type="text" autocomplete="username" required>
+        </label>
+        <label>Password
+          <input id="login-password" type="password" autocomplete="current-password" required>
+        </label>
+        <button type="submit" class="btn btn-primary">Sign in</button>
+        <p id="login-error" class="error-text"></p>
+      </form>
+    </div>
+  </section>
+
+  <section id="view-home" hidden>
+    <div class="topbar">
+      <h1>yt-web-downloader</h1>
+      <button id="logout-btn" class="btn">Logout</button>
+    </div>
+    <div class="card">
+      <form id="analyze-form" class="analyze-form">
+        <input id="url-input" type="text" placeholder="Paste a video or playlist URL" required>
+        <button type="submit" class="btn btn-primary">Analyze</button>
+      </form>
+      <p id="analyze-error" class="error-text"></p>
+    </div>
+    <div class="card">
+      <h2>Jobs</h2>
+      <div id="jobs-list"></div>
+    </div>
+  </section>
+
+  <section id="view-options" hidden>
+    <div class="topbar">
+      <button id="options-back" class="btn" type="button">&larr; Back</button>
+      <h1 id="options-title"></h1>
+    </div>
+    <div class="card">
+      <p id="options-subtitle" class="muted"></p>
+
+      <div class="field-group">
+        <span class="field-label">Mode</span>
+        <div class="checkbox-row">
+          <label><input type="checkbox" id="opt-audio" checked> Audio</label>
+          <label><input type="checkbox" id="opt-video"> Video</label>
+          <label><input type="checkbox" id="opt-merge" disabled> Merge into one file (mkv)</label>
+        </div>
+        <p class="hint-block">No re-encoding, ever. Audio: opus → .ogg (or aac → .m4a). Video: always packaged as .mkv (lossless remux), codec picked as av1 → vp9 → h264.</p>
+      </div>
+
+      <div class="field-group" id="video-group" hidden>
+        <label for="video-res-select">Resolution</label>
+        <select id="video-res-select">
+          <option value="best">best</option>
+          <option value="2160">2160</option>
+          <option value="1440">1440</option>
+          <option value="1080">1080</option>
+          <option value="720">720</option>
+        </select>
+      </div>
+
+      <div class="field-group">
+        <span class="field-label">Metadata</span>
+        <label><input type="checkbox" id="opt-thumbnail" checked> Embed thumbnail</label>
+        <label><input type="checkbox" id="opt-tags" checked> Embed standard tags</label>
+        <label><input type="checkbox" id="opt-url-date"> URL + upload date tags</label>
+        <label id="playlist-tags-label" hidden><input type="checkbox" id="opt-playlist-tags"> Playlist URL + added date tags</label>
+        <p id="playlist-tags-hint" class="hint" hidden>requires GOOGLE_API_KEY</p>
+      </div>
+
+      <div class="field-group" id="entries-group" hidden>
+        <span class="field-label">Entries</span>
+        <div class="entries-toolbar">
+          <a href="#" id="select-all">Select all</a> / <a href="#" id="select-none">none</a>
+          <label class="ranges-label">Ranges
+            <input type="text" id="ranges-input" placeholder="1, 2-5, 7-10">
+          </label>
+        </div>
+        <div class="entries-table-wrap">
+          <table id="entries-table">
+            <thead><tr><th></th><th>#</th><th>Title</th><th>Channel</th><th>Duration</th></tr></thead>
+            <tbody id="entries-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <button id="download-btn" class="btn btn-primary" type="button">Download</button>
+      <p id="options-error" class="error-text"></p>
+    </div>
+  </section>
+
+  <section id="view-job" hidden>
+    <div class="topbar">
+      <button id="job-back" class="btn" type="button">&larr; Back</button>
+      <h1 id="job-title"></h1>
+      <span id="job-badge" class="badge"></span>
+    </div>
+    <div class="card">
+      <p id="job-options-summary" class="muted"></p>
+      <div id="job-error-box" class="error-box" hidden></div>
+      <div id="job-progress" class="job-progress"></div>
+      <details>
+        <summary>Log</summary>
+        <pre id="job-log" class="log-box"></pre>
+      </details>
+    </div>
+    <div class="card" id="job-files-card" hidden>
+      <h2>Files</h2>
+      <ul id="job-files-list" class="files-list"></ul>
+      <div class="actions">
+        <a id="job-zip-link" class="btn" download>Download all (zip)</a>
+        <button id="job-delete-btn" class="btn btn-danger" type="button">Delete</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+<script src="/app.js" defer></script>
+</body>
+</html>
